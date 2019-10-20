@@ -8,3 +8,6 @@ Define the BNF for a specific language.
 I implement it by python. 
 I only use no more than 100 lines to implement it.
 
+#### the code path
+compiler/random_code_gen.py
+
