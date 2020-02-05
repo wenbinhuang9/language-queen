@@ -1,0 +1,255 @@
+
+
+#include<stdio.h>
+#include <stdlib.h>
+#inude <semaphore.h>
+enum LetterGrade{
+    A=4,
+    B=3,
+    C=2,
+    D=1,
+    F=0
+};
+
+double getLetterGradeArrayAverage(enum LetterGrade arr[], int len) {
+    double s = 0.0;
+    for(int i = 0; i < len; i++){
+        s += (double)arr[i];
+    }
+    return s/len;
+}
+
+double getArrayAverage(int arr[], int len) {
+    double sum = 0.0;
+    for(int i = 0; i < len; i++){	
+        sum += (double)arr[i];
+    }
+    return sum/len;
+}
+
+
+
+
+enum LetterGrade getLetterGradeFromAverage(const double avg) {
+    if (avg >= 90)
+        return A;
+    else if (avg >= 80)
+        return B;
+    else if (avg >= 70)
+        return C;
+    else if (avg >= 60)
+        return D;
+    else
+        return F;
+}
+
+void convertCharToLetterGrade(char* grade) {
+    switch (*grade) {
+        case 'A': case 'a':
+            *grade = 4;
+            return;
+        case 'B': case 'b':
+            *grade = 3;
+            return;
+        case 'C': case 'c':
+            *grade = 2;
+            return;
+        case 'D': case 'd':
+            *grade = 1;
+            return;
+        case 'F': case 'f':
+            *grade = 0;return;
+        default:
+            printf("Warning... Invalid Character... Recording an F.\n");
+        return;
+    }
+}
+
+
+
+/* remove the null terminator */
+void strip_newline( char *str, int size ){
+    int i;
+	
+    for (  i = 0; i < size; ++i ){
+        if ( str[i] == '\n' ){
+            str[i] = '\0';
+            return;   
+        }
+    }
+}
+
+void push(int *arr, int index, int value, int *size){
+     if(index >= *size){
+          realloc(arr, sizeof(arr) *2);
+     }
+     arr[index] = value;
+     *size = *size + 1;
+}
+
+void skip() {
+	char skip;
+	scanf("%c", &skip);
+}
+
+int main()
+{
+	char skip;	
+	
+	/*1. use char arry to replace string*/
+    char firstName[50];
+    printf("Please enter your first name: ");
+    fgets( firstName, 50, stdin );
+	strip_newline(firstName, 50);
+	
+    char lastName[50];
+    printf("Please enter your last name: ");
+    fgets( lastName, 50, stdin );
+    strip_newline(lastName, 50);
+	
+    int numPrevCourses;
+	printf("Enter number of previous courses: ");
+    scanf("%d", &numPrevCourses);
+	scanf("%c", &skip);
+
+//    int prevGrades[numPrevCourses];
+	int* prevGrades = (int* )malloc(numPrevCourses * sizeof(int));
+    for (int courseIx = 0; courseIx < numPrevCourses; ++courseIx) {
+        char letterGrade;
+		// no print here why?
+        printf("Enter letter grade for course %d: ", courseIx + 1);
+        scanf("%c", &letterGrade);
+		scanf("%c", &skip);
+        convertCharToLetterGrade(&letterGrade);
+        prevGrades[courseIx] = letterGrade;
+    } 
+    int numExams;
+	
+	printf("Enter number of exams this semester:");
+    scanf("%d", &numExams);
+
+    int examGrades[numExams];
+	//todo here has some problems
+    for (int examIx = 0; examIx < numExams; ++examIx) {
+        int numGrade;
+        printf("Enter grade for exam %d as an integer:", examIx + 1);
+        scanf("%d", &numGrade);
+        examGrades[examIx] = numGrade;
+    } 
+    
+    //const auto fullName = firstName + " " + lastName;
+    printf("Grade Report For: %s  %s\n", firstName, lastName);
+    double examAverage = getArrayAverage(examGrades, numExams);
+    printf("Your exam average is: %lf \n", examAverage);
+    // get GPA with newest course added:
+    enum LetterGrade newLetterGrade = getLetterGradeFromAverage(examAverage);
+	
+    //how to implement it? 
+	push(prevGrades, numPrevCourses, newLetterGrade, &numPrevCourses);
+    // prevGrades.push_back(newLetterGrade);
+    double gpa = getLetterGradeArrayAverage(prevGrades, numPrevCourses);
+	printf("Your latest GPA is: %lf\n", gpa);
+    
+    return 0;
+}    
+
+
+//#include <iostream>
+//#include <string>
+//#include <cstdint>
+//#include <vector>
+//using namespace std;
+//enum LetterGrade {
+//A = 4,
+//B = 3,
+//C = 2,
+//D = 1,
+//F = 0
+//};
+//// type T must be castable into a double
+//template<class T> 
+//double getArrayAverage(vector<T>& vec) {
+//	double sum = 0;
+//	for (const auto& value : vec) {
+//	sum += static_cast<double>(value);
+//	}
+//	const auto avg = sum / vec.size();
+//	return avg;
+//} 
+//void convertCharToLetterGrade(char& grade) {
+//	switch (grade) {
+//		case 'A': case 'a':
+//		grade = 4;
+//		return;
+//		case 'B': case 'b':
+//		grade = 3;
+//		return;
+//		case 'C': case 'c':
+//		grade = 2;
+//		return;
+//		case 'D': case 'd':
+//		grade = 1;
+//		return;
+//		case 'F': case 'f':
+//		grade = 0;return;
+//		default:
+//		cout << "Warning... Invalid Character... Recording an F.\n";
+//		return;
+//	}
+//} 
+//LetterGrade getLetterGradeFromAverage(const double avg) {
+//	if (avg >= 90)
+//	return LetterGrade::A;
+//	else if (avg >= 80)
+//	return LetterGrade::B;
+//	else if (avg >= 70)
+//	return LetterGrade::C;
+//	else if (avg >= 60)
+//	return LetterGrade::D;
+//	else
+//	return LetterGrade::F;
+//} 
+//int main()
+//{
+//	cout << "this is c++: ";
+//	string firstName;
+//	cout << "Please enter your first name: ";
+//	cin >> firstName;
+//	string lastName;
+//	cout << "Please enter your last name: ";
+//	cin >> lastName;
+//	int32_t numPrevCourses;
+//	cout << "Enter number of previous courses: ";
+//	cin >> numPrevCourses;
+//	cin.ignore();
+//	vector<LetterGrade> prevGrades(numPrevCourses);
+//	for (int32_t courseIx = 0; courseIx < numPrevCourses; ++courseIx) {
+//		cout << "Enter letter grade for course " << courseIx << ": ";
+//		char letterGrade;
+//		cin.get(letterGrade);
+//		cin.ignore();
+//		convertCharToLetterGrade(letterGrade);
+//		prevGrades.at(courseIx) = static_cast<LetterGrade>(letterGrade);
+//	} 
+//	int32_t numExams;
+//	cout << "Enter number of exams this semester: ";
+//	cin >> numExams;
+//	cin.ignore();vector<int32_t> examGrades(numExams);
+//	for (int32_t examIx = 0; examIx < numExams; ++examIx) {
+//		cout << "Enter grade for exam " << examIx << " as an integer: ";
+//		cin >> examGrades.at(examIx) ;
+//		cin.ignore();
+//	} 
+//	const auto fullName = firstName + " " + lastName;
+//	cout << "Grade Report For " << fullName << ":\n";
+//	const auto examAverage = getArrayAverage(examGrades);
+//	cout << "Your exam average is: " << examAverage << "\n";
+//	// get GPA with newest course added:
+//	const auto newLetterGrade = getLetterGradeFromAverage(examAverage);
+//	
+//	prevGrades.push_back(newLetterGrade);
+//	
+//	const auto gpa = getArrayAverage(prevGrades);
+//	cout << "Your latest GPA is: " << gpa << "\n";
+//	return 0;
+//}
